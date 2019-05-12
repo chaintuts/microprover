@@ -102,7 +102,7 @@ class MicroProver():
     # Get the difficulty target from the specified difficulty
     # The difficulty will be an 8 bit number 0 - 255
     def get_diff_target(self, difficulty):
-        multiplier = 8 - difficulty
+        multiplier = 7 - difficulty
         target = (2 ** multiplier)
 
         return target
