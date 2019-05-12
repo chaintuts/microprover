@@ -88,7 +88,10 @@ class MicroProver():
 
             # Get the hash of the data and check if it meets the target
             hash8 = self.hash_8bit(block + nonce)
+
             self.display_byte_led(hash8)
+            self.log_hash(target, hash8, block, nonce)
+
             result = self.check_hash(hash8, target)
             if result:
                 return True
@@ -129,6 +132,21 @@ class MicroProver():
 
         return block
 
+    # This function logs hash attempts to the serial connection
+    # This data can be used to better understand the algorithm
+    # if desired
+    def log_hash(self, target, hash8, block, nonce):
+
+        # First, format the target and hash8 in binary format (0's and 1's)
+        target_bitarray = self.byte_to_bitarr(target, mode="bit")
+        target_binary = "".join(target_bitarray)
+        hash8_bitarray = self.byte_to_bitarr(hash8, mode="bit")
+        hash8_binary = "".join(hash8_bitarray)
+
+        # Format the log string and print to the serial console
+        log_string = "Target {}, Hash8 {}, Block {}, Nonce {}"
+        print(log_string.format(target_binary, hash8_binary, block, nonce))
+
     # This function displays an LED representation of a byte
     # It lights up 8 LEDs on the Playground Express board
     # Green represents a 1 bit
@@ -149,7 +167,9 @@ class MicroProver():
 
     # Convert a byte of data (8 bit hash, etc.) into
     # an array of bits represented by True (1) and False (0)
-    def byte_to_bitarr(self, byte):
+    # (with default mode bool)
+    # Specify optional mode "bit" for 0/1 representation
+    def byte_to_bitarr(self, byte, mode="bool"):
 
         # Define some bitmasks for each spot in the byte
         # We'll create the array using bitmasking
@@ -158,7 +178,11 @@ class MicroProver():
 
         bitarr = []
         for i in range(0, 8):
-            bit = bool(byte & masks[i])
+            if mode == "bit":
+                masked = byte & masks[i]
+                bit = "1" if masked > 0 else "0"
+            else:
+                bit = bool(byte & masks[i])
             bitarr.append(bit)
 
         return bitarr
