@@ -20,6 +20,13 @@ class MicroProver():
         self.GREEN = (0, 255, 0)
         self.BLANK = (0, 0, 0)
 
+        # Settings for random numbers
+        self.RAND_MIN = 0
+        self.RAND_MAX = 255
+
+        # Settings for "cryptography"
+        self.HASH_MOD = 256
+
     # This function sets the difficulty level for proof-of-work
     # The user presses B to set a difficulty level from 1 - 7
     # The difficulty will be shown on the board by showing LEDs
@@ -97,7 +104,7 @@ class MicroProver():
                 return True
 
             # Increment the nonce
-            nonce += random.randint(257, 12345678)
+            nonce += random.randint(self.RAND_MIN, self.RAND_MAX)
 
     # Get the difficulty target from the specified difficulty
     # The difficulty will be an 8 bit number 0 - 255
@@ -111,7 +118,7 @@ class MicroProver():
     # This is for educational purposes, so we don't need a
     # cryptographically secure hash, we just need one that works
     def hash_8bit(self, data):
-        hash8 = data % 256
+        hash8 = data % self.HASH_MOD
 
         return hash8
 
@@ -128,7 +135,7 @@ class MicroProver():
     def get_random_block(self):
 
         random.seed(time.time())
-        block = random.randint(257, 12345678)
+        block = random.randint(self.RAND_MIN, self.RAND_MAX)
 
         return block
 
