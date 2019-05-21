@@ -101,6 +101,7 @@ class MicroProver():
 
             result = self.check_hash(hash8, target)
             if result:
+                self.alert_solution()
                 return True
 
             # Increment the nonce
@@ -171,6 +172,12 @@ class MicroProver():
             # fill evenly on each side of the board
             cpx.pixels[i + 1] = color
         cpx.pixels.show()
+
+    # Make an audible alert when a solution is found
+    # This plays a tone through the Circuit Playground's speaker
+    def alert_solution(self):
+
+        cpx.play_tone(300, 0.5)
 
     # Convert a byte of data (8 bit hash, etc.) into
     # an array of bits represented by True (1) and False (0)
