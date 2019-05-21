@@ -27,6 +27,9 @@ class MicroProver():
         # Settings for "cryptography"
         self.HASH_MOD = 256
 
+        # Initialize logging
+        self.init_logging()
+
     # This function sets the difficulty level for proof-of-work
     # The user presses B to set a difficulty level from 1 - 7
     # The difficulty will be shown on the board by showing LEDs
@@ -91,21 +94,23 @@ class MicroProver():
         block = self.get_random_block()
         target = self.get_diff_target(difficulty)
         nonce = 0
+        attempt = 1
         while True:
 
             # Get the hash of the data and check if it meets the target
             hash8 = self.hash_8bit(block + nonce)
 
             self.display_byte_led(hash8)
-            self.log_hash(target, hash8, block, nonce)
+            self.log_hash(target, hash8, block, nonce, attempt)
 
             result = self.check_hash(hash8, target)
             if result:
                 self.alert_solution()
                 return True
 
-            # Increment the nonce
-            nonce += random.randint(self.RAND_MIN, self.RAND_MAX)
+            # Increment the nonce and attempt counter
+            nonce = random.randint(self.RAND_MIN, self.RAND_MAX)
+            attempt += 1
 
     # Get the difficulty target from the specified difficulty
     # The difficulty will be an 8 bit number 0 - 255
@@ -140,10 +145,16 @@ class MicroProver():
 
         return block
 
+    # Initialize logging functionality
+    # This function will output CSV headers
+    def init_logging(self):
+
+        print("Target,Hash8,Block,Nonce,Attempt")
+
     # This function logs hash attempts to the serial connection
     # This data can be used to better understand the algorithm
     # if desired
-    def log_hash(self, target, hash8, block, nonce):
+    def log_hash(self, target, hash8, block, nonce, attempt):
 
         # First, format the target and hash8 in binary format (0's and 1's)
         target_bitarray = self.byte_to_bitarr(target, mode="bit")
@@ -152,8 +163,8 @@ class MicroProver():
         hash8_binary = "".join(hash8_bitarray)
 
         # Format the log string and print to the serial console
-        log_string = "Target {}, Hash8 {}, Block {}, Nonce {}"
-        print(log_string.format(target_binary, hash8_binary, block, nonce))
+        log_string = "{},{},{},{},{}"
+        print(log_string.format(target_binary, hash8_binary, block, nonce, attempt))
 
     # This function displays an LED representation of a byte
     # It lights up 8 LEDs on the Playground Express board
@@ -202,8 +213,8 @@ class MicroProver():
         return bitarr
 
 # This is the main entry point for the program and implements a basic main menu
+mp = MicroProver()
 while True:
 
-    mp = MicroProver()
     diff = mp.program_difficulty()
     mp.visualize_pow(diff)
