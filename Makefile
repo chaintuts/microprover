@@ -4,7 +4,7 @@
 #
 
 # This block defines makefile variables
-SRC_FILES=src/core/*.py
+SRC_FILES=src/core/*.py src/boot/*
 
 BUILD_DIR=bin/microprover
 
@@ -12,6 +12,7 @@ BUILD_DIR=bin/microprover
 build: $(SRC_FILES)
 	mkdir -p $(BUILD_DIR)
 	cp $(SRC_FILES) $(BUILD_DIR)
+	mv $(BUILD_DIR)/MicroProver.py $(BUILD_DIR)/code.py
 
 # This rule cleans the build directory
 clean: $(BUILD_DIR)

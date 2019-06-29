@@ -187,8 +187,16 @@ class MicroProver():
         hash8_binary = "".join(hash8_bitarray)
 
         # Format the log string and print to the serial console
-        log_string = "{},{},{},{},{},{}"
-        print(log_string.format(run, target_binary, hash8_binary, block, nonce, attempt))
+        log_string = "{},{},{},{},{},{}\n"
+        log_entry = log_string.format(run, target_binary, hash8_binary, block, nonce, attempt)
+        print(log_entry)
+
+        # Now write to the log file onboard the CircuitPython device if able
+        try:
+            with open("pow_log.csv", "a") as f:
+                f.write(log_entry)
+        except Exception as e:
+            print("{}".format(e))
 
     # This function displays an LED representation of a byte
     # It lights up 8 LEDs on the Playground Express board
