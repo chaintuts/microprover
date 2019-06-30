@@ -173,7 +173,14 @@ class MicroProver():
     # This function will output CSV headers
     def init_logging(self):
 
-        print("Run,Target,Hash8,Block,Nonce,Attempt")
+        headers = "Run,Target,Hash8,Block,Nonce,Attempt\n"
+        print(headers)
+
+        try:
+            with open("pow_log.csv", "w") as f:
+                f.write(headers)
+        except Exception as e:
+            print("{}".format(e))
 
     # This function logs hash attempts to the serial connection
     # This data can be used to better understand the algorithm
