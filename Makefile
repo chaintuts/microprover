@@ -4,7 +4,7 @@
 #
 
 # This block defines makefile variables
-SRC_FILES=src/core/*.py src/boot/*
+SRC_FILES=src/core/*.py src/boot/* src/dataviz/*
 
 BUILD_DIR=bin/microprover
 

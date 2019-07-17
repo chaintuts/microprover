@@ -43,3 +43,7 @@ ____________
 * Press A to start hashing - each 8-bit hash value will be shown with the board LEDs. RED == 0, GREEN == 1
 * The final solution (hash value) will be displayed by the LEDs
 * Press A to restart hashing, or B to return to the difficulty programming menu
+
+### Data visualization
+* Copy the logfile (pow_log.csv) from the Circuit Playground Express filesystem to the user machine
+* Run `python graph_pow.py` in the log directory
