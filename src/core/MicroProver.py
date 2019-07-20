@@ -104,11 +104,11 @@ class MicroProver():
             hash8 = self.hash_8bit(block + nonce)
 
             self.display_byte_led(hash8)
-            self.log_hash(run, target, hash8, block, nonce, attempt)
 
             result = self.check_hash(hash8, target)
             if result:
                 self.alert_solution()
+                self.log_run(run, target, hash8, block, nonce, attempt)
                 return True
 
             # Increment the nonce and attempt counter
@@ -132,7 +132,7 @@ class MicroProver():
 
         nonces = list( range(self.RAND_MIN, self.RAND_MAX) )
         for i in range(self.RAND_MAX - 1, 0, -1):
-            swap = random.randint(0, i + 1)
+            swap = random.randint(0, i)
             tmp = nonces[i]
             nonces[i] = nonces[swap]
             nonces[swap] = tmp
@@ -173,7 +173,7 @@ class MicroProver():
     # This function will output CSV headers
     def init_logging(self):
 
-        headers = "Run,Target,Hash8,Block,Nonce,Attempt\n"
+        headers = "Run,Target,Solution_Hash8,Block,Solution_Nonce,Attempts\n"
         print(headers)
 
         try:
@@ -182,20 +182,19 @@ class MicroProver():
         except Exception as e:
             print("{}".format(e))
 
-    # This function logs hash attempts to the serial connection
-    # This data can be used to better understand the algorithm
-    # if desired
-    def log_hash(self, run, target, hash8, block, nonce, attempt):
+    # This function logs run data to the serial connection and file (if possible)
+    # This data can be used to better understand the algorithm and do data visualization
+    def log_run(self, run, target, solution_hash8, block, solution_nonce, total_attempts):
 
         # First, format the target and hash8 in binary format (0's and 1's)
         target_bitarray = self.byte_to_bitarr(target, mode="bit")
         target_binary = "".join(target_bitarray)
-        hash8_bitarray = self.byte_to_bitarr(hash8, mode="bit")
+        hash8_bitarray = self.byte_to_bitarr(solution_hash8, mode="bit")
         hash8_binary = "".join(hash8_bitarray)
 
         # Format the log string and print to the serial console
         log_string = "{},{},{},{},{},{}\n"
-        log_entry = log_string.format(run, target_binary, hash8_binary, block, nonce, attempt)
+        log_entry = log_string.format(run, target_binary, hash8_binary, block, solution_nonce, total_attempts)
         print(log_entry)
 
         # Now write to the log file onboard the CircuitPython device if able
