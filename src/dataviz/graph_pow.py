@@ -43,7 +43,10 @@ def graph_pow_bar(data, title="Proof of Work Attempts", xlabel="Target (Binary)"
     xlabels = [ target for target, attempts in data.items() ]
 
     # For the y axes, simply get each list of attempts
-    yaxes = [ attempts for target, attempts in data.items() ]
+    yaxes_raw = [ attempts for target, attempts in data.items() ]
+    yaxes = []
+    for raw in yaxes_raw:
+        yaxes.append([ int(att) for att in raw ])
 
     # For the x axes, group together attempts for the same target
     xaxes = []
