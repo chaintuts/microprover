@@ -69,8 +69,13 @@ def graph_pow_bar(data, title="Proof of Work Attempts", xlabel="Target (Binary)"
         bars = ax.bar(xaxes[i], yaxes[i], width=0.2, color="bgry")
 
     # Add annotations
-    ax.set_xticks(range(0, len(xlabels)))
+    xticks = []
+    for i in range(0, len(xlabels)):
+        offset = ( len(xaxes[i]) / 2 ) * barwidth - ( barwidth / 2 )
+        xticks.append(i + offset)
+    ax.set_xticks(xticks)
     ax.set_xticklabels(xlabels, rotation=90)
+
     pyplot.xlabel(xlabel)
     pyplot.ylabel(ylabel)
     pyplot.title(title)
