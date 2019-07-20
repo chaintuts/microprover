@@ -95,7 +95,6 @@ class MicroProver():
         cpx.pixels.fill(self.BLANK)
         block = self.get_random_block()
         target = self.get_diff_target(difficulty)
-        possible_nonces = self.create_nonces()
         nonce = 0
         attempt = 1
         while True:
@@ -112,7 +111,7 @@ class MicroProver():
                 return True
 
             # Increment the nonce and attempt counter
-            nonce = possible_nonces[attempt]
+            nonce = random.randint(self.RAND_MIN, self.RAND_MAX)
             attempt += 1
 
     # Get the difficulty target from the specified difficulty
@@ -122,22 +121,6 @@ class MicroProver():
         target = (2 ** multiplier)
 
         return target
-
-    # Since our hash space is only 8 bit, we should have a
-    # max of 256 possible nonces
-    # Since our hash algorithm is simplistic and predictable,
-    # let's shuffle the list of possible nonces to make our
-    # algorithm behave more realistically
-    def create_nonces(self):
-
-        nonces = list( range(self.RAND_MIN, self.RAND_MAX) )
-        for i in range(self.RAND_MAX - 1, 0, -1):
-            swap = random.randint(0, i)
-            tmp = nonces[i]
-            nonces[i] = nonces[swap]
-            nonces[swap] = tmp
-
-        return nonces
 
     # Return a really simple 8 bit hash
     # This is for educational purposes, so we don't need a
