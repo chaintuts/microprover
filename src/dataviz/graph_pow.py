@@ -18,27 +18,16 @@ def format_data():
     with open("pow_log.csv", "r") as f:
         dr = csv.DictReader(f)
 
-        # Get the raw runs (each row) from the CSV file,
-        # and get the target for each run
-        raw_runs = [ r for r in dr ]
-        runs_targets = { _["Run"] :  _["Target"] for _ in raw_runs }
-
-        # Use most_common() as a nice way to get the count of each run
-        # Each attempt gets its own row in the log, so this lets us easily count
-        # the number of attempts per run
-        counter = collections.Counter([ _["Run"] for _ in raw_runs ])
-        runs = counter.most_common()
-
         # For each run, get the target and number of attempts from the
         # above data structures
         # We need a list of attempts per target for graphing
         # For example, target 01000000 may have runs with attempts 5, 4, 8
         data = {}
-        for run in runs:
-            target = runs_targets[run[0]]
+        for run in dr:
+            target = run["Target"]
             if not target in data:
                 data[target] = []
-            data[target].append(run[1])
+            data[target].append(run["Attempts"])
 
     return data 
         
