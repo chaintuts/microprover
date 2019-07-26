@@ -20,6 +20,10 @@ class MicroProver():
         self.GREEN = (0, 255, 0)
         self.BLANK = (0, 0, 0)
 
+        # Accessibility options
+        self.SHAKE_THRESHOLD = 50
+        self.sound_mode = False
+
         # Settings for random numbers
         self.RAND_MIN = 0
         self.RAND_MAX = 255
@@ -56,12 +60,23 @@ class MicroProver():
                 else:
                     diff += 1
 
+                # Read the difficulty to the user if sound mode is enabled
+                if self.sound_mode:
+                    self.read_difficulty(diff)
+
                 # Sleep so we don't get a big jump in value
                 time.sleep(0.2)
 
             # Press A to exit the setup and start the proof of work
             if cpx.button_a:
                 break
+
+            # If we detect a shake, toggle accessible "sound mode"
+            # Play a tone when sound mode is toggled reusing alert_solution
+            (x, y, z) = cpx.acceleration
+            if abs(x) > self.SHAKE_THRESHOLD:
+                self.sound_mode = not self.sound_mode
+                self.alert_solution()
 
         # Set the difficulty
         return diff
@@ -76,6 +91,8 @@ class MicroProver():
         while True:
             if not solution:
                 solution = self.prove_work(self.run, difficulty)
+                if solution and self.sound_mode:
+                    self.read_solution(solution)
             else:
                 if cpx.button_a:
                     solution = False
@@ -106,9 +123,10 @@ class MicroProver():
 
             result = self.check_hash(hash8, target)
             if result:
-                self.alert_solution()
+                if self.sound_mode:
+                    self.alert_solution()
                 self.log_run(run, target, hash8, block, nonce, attempt)
-                return True
+                return hash8
 
             # Increment the nonce and attempt counter
             nonce = random.randint(self.RAND_MIN, self.RAND_MAX)
@@ -210,6 +228,24 @@ class MicroProver():
     def alert_solution(self):
 
         cpx.play_tone(300, 0.5)
+
+    # Read the difficulty target through the built-in speaker for accessibility
+    def read_difficulty(self, difficulty):
+
+        try:
+            cpx.play_file("sounds/" + str(difficulty) + ".wav")
+        except OSError as e:
+            print("Unable to read audio difficulty target")
+
+    # Read the found solution through the built-in speaker for accessibility
+    def read_solution(self, solution_hash8):
+
+        solution_hash8 = self.byte_to_bitarr(solution_hash8, mode="bit")
+        for bit in solution_hash8:
+            try:
+                cpx.play_file("sounds/" + str(bit) + ".wav")
+            except OSError as e:
+                print("Unable to read audio solution")
 
     # Convert a byte of data (8 bit hash, etc.) into
     # an array of bits represented by True (1) and False (0)
