@@ -37,9 +37,18 @@ Clean the build directory
 ____________
 
 ### General usage
-* Rename the desired module to "code.py" and copy to the root directory
+* Copy "code.py" and "boot.py" to the root directory
+* Switch the on/off switch (D7) to the right (facing VOUT, A0, A7) and reset. This will ensure the log can be written to the onboard storage
 * Set the difficulty rating from 1-7 by pressing the B button. The difficulty will be displayed by the LEDs
 * Press A to start hashing - each 8-bit hash value will be shown with the board LEDs. RED == 0, GREEN == 1
 * The final solution (hash value) will be displayed by the LEDs
 * Press A to restart hashing, or B to return to the difficulty programming menu
 
+### Accessibility
+* Shake the Circuit Playground board while in the difficulty menu to turn on accessible "sound mode"
+* This mode will read the difficulty target in the programming menu, play a tone when a solution is found,
+and read the solution block hash in binary format
+
+### Data visualization
+* Copy the logfile (pow_log.csv) from the Circuit Playground Express filesystem to the user machine
+* Run `python graph_pow.py` in the log directory
